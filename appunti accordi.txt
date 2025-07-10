@@ -1,0 +1,49 @@
+MAJOR KEYS
+Le note disponibili in ciascuna scala maggiore, espresse in termini di # di semitoni di distanza
+dalla tonica, sono 0-2-4-5-7-9-11-12
+
+Grado   Tipo    Settima         Numero di semitoni dalla tonica (7th tra parentesi)     Somma di semitoni dalla nota precedente (7th tra parentesi)
+I       maj     maj7th          0-4-7-(11)                                              +0 +4 +3 (+4)
+ii      min     min7th          2-5-9-(12)                                              +0 +3 +7 (+3)
+iii     min     min7th          4-7-11-(14)                                             +0 +3 +4 (+3)
+IV      maj     maj7th          5-9-12-(16)                                             +0 +4 +3 (+4)
+V       maj     dom7th          7-11-14-(17)                                            +0 +4 +3 (+3)
+vi      min     min7th          9-12-16-(19)                                            +0 +3 +4 (+3)
+vii°    dim     halfdim7th      11-14-17-(21)                                           +0 +3 +3 (+4)
+I       maj     maj7th          12-16-19-(23)                                           +0 +4 +3 (+4)
+
+MINOR KEY
+Le note disponibili in ciascuna scala minore, espresse in termini di # di semitoni di distanza
+dalla tonica, sono 0-2-3-5-7-8-10-12
+Grado   Tipo    Settima         Numero di semitoni dalla tonica (7th tra parentesi)     Somma di semitoni dalla nota precedente (7th tra parentesi)
+i       min     min7th          0-4-7-(11)                                              +0 +4 +3 (+4)
+ii°     dim     halfdim7th      2-5-8-(12)                                              +0 +3 +3 (+4)
+III     maj     maj7th          3-7-10-(14)                                             +0 +4 +3 (+4)
+iv      min     min7th          5-8-12-(15)                                             +0 +3 +4 (+3)
+v       min     min7th          7-10-14-(17)                                            +0 +3 +4 (+3)
+VI      maj     maj7th          8-12-15-(19)                                            +0 +4 +3 (+4)
+VII     maj     maj7th          10-14-17-(21)                                           +0 +4 +3 (+4)
+i       min     min7th          12-16-19-(23)                                           +0 +4 +3 (+4)
+
+
+Chord Type      Numero di semitoni dalla tonica     Somma di semitoni dalla nota precedente (somma)
+maj             0-4-7                               +0 +4 +3
+min             0-3-7                               +0 +3 +4
+dim             0-3-6                               +0 +3 +3
+maj7th          0-4-7-11                            +0 +4 +3 +4
+min7th          0-3-7-10                            +0 +3 +4 +3
+dom7th          0-4-7-10                            +0 +4 +3 +3
+halfdim7th      0-3-6-10                            +0 +3 +3 +4
+
+
+Supponiamo di avere una certa nota della melodia e la sua tonalità.
+- se la nota è diatonica, bisogna
+    - controllare la distanza in semitoni dalla tonica della tonalità
+    - controllare in quali accordi compare
+    - scegliere casualmente uno di questi accordi
+    - scegliere un rivolto casuale
+    - scegliere casualmente una nota dell'accordo da raddoppiare per maj, min e dim in modo da avere quattro voci anche per questi (???)
+
+- se la nota non è diatonica, bisogna
+    - scegliere casualmente uno di questi accordi
+    - sostituire una nota casuale dell'accordo con la nota non diatonica
