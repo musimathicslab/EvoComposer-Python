@@ -1,6 +1,8 @@
 from music21 import *
 import random
 import copy
+import os
+import json
 from utility.constants import MAJOR_KEY_CHORD_INFO, MINOR_KEY_CHORD_INFO
 
 class Chromosome:
@@ -63,7 +65,7 @@ class Chromosome:
         self.score = stream.Score()
 
         # Add parts to Score object
-        self.score.append([self.bass, self.tenor, self.alto, self.soprano])
+        self.score.append([self.soprano, self.alto, self.tenor, self.bass])
 
     
     def harmonize(self):
@@ -225,93 +227,43 @@ class Chromosome:
 
 
     def _build_chord(self, n):
-        # Choose chord info dictionary based on key signature
-        key_chord_info = MAJOR_KEY_CHORD_INFO if str(self.keySignature).split()[1] == "major" else MINOR_KEY_CHORD_INFO
+        available_chords = []
         
         # Get diatonic notes in the scale of the key signature of the input melody
         s = self.keySignature.getScale()
         diatonic_notes = [str(p)[:-1] for p in scale.Scale.extractPitchList(s, comparisonAttribute="pitchClass")]
         
-        # Check if melody note is diatonic
+        # If note is diatonic, choose a random chord that contains it among diatonic ones
         n_noOctave = n.nameWithOctave[:-1]
+
+        # Load note chord atlas
+        note_chord_atlas_path = os.path.join(".\\utility\\chord_atlases", n_noOctave + "_chord_atlas.json")
+        with open(note_chord_atlas_path, "r") as file:
+            note_chord_atlas = json.load(file)
+        
         if n_noOctave in diatonic_notes:
-            # Identify role of the note in the scale (+1 to get values in 1-7 instead of 0-6)
-            degree = diatonic_notes.index(n_noOctave)+1
+            for cur_chord in note_chord_atlas[str(self.keySignature).capitalize()]:
+                if cur_chord[self.voice_idx] == 0 or cur_chord[self.voice_idx] == 12 or cur_chord[self.voice_idx] == -12:
+                    available_chords.append(cur_chord)
             
-            n_semitonesFromTonic = key_chord_info[degree]["OffsetInSemitonesDegreeFromTonic"]
-            
-            # Get all diatonic chords where the note appears
-            available_diatonic_chords = []
-            for appearsIn in key_chord_info[degree]["AppearsInDegree"]:
-                available_diatonic_chords.append(key_chord_info[appearsIn])
-            
-            # Create all possible inversions
-            available_chords = []
-            for i in range(len(available_diatonic_chords)):
-                curr_chord = copy.deepcopy(available_diatonic_chords[i]["SemitonesFromTonicSameOctave"])
+        # If note n is not diatonic, choose a random chord that contains it among all possible keys
+        else:
+            key_signatures = [
+                "C major", "C# major", "D- major", "D major", "D# major", "E major", "F major", "F# major", "G- major", "G major", "G# major", "A- major", "A major", "A# major", "B- major", "B major",
+                "C minor", "C# minor", "D- minor", "D minor", "D# minor", "E minor", "F minor", "F# minor", "G- minor", "G minor", "G# minor", "A- minor", "A minor", "A# minor", "B- minor", "B minor",
+            ]
 
-                res = self._get_inversions(n_semitonesFromTonic, curr_chord)
+            for key_signature in key_signatures:
+                for cur_chord in note_chord_atlas[key_signature]:
+                    if cur_chord[self.voice_idx] == 0 or cur_chord[self.voice_idx] == 12 or cur_chord[self.voice_idx] == -12:
+                        available_chords.append(cur_chord)
 
-                for r in res:
-                    available_chords.append(r)
-            
-            
-            # The following for loop:
-            # 1. adjusts note's octaves so that the notes are in ascending order
-            # 2. shifts all the notes so that the current note is transposed by 0 semitones (i.e. left unchanged) 
-            # 3. if the chord spans more than two octaves, shifts the notes so that they fit in two octaves
-            for i in range(len(available_chords)):
-                curr_chord = available_chords[i]
-
-                # 1.
-                sorted = False
-                while not sorted:
-                    sorted = True
-                    for i in range(len(curr_chord) - 1):
-                        if curr_chord[i] >= curr_chord[i+1]:
-                            curr_chord[i] -= 12
-                            sorted = False
-                
-                # 2.
-                for i in range(len(curr_chord)):
-                    curr_chord[i] -= n_semitonesFromTonic
-
-                # 3.
-                if min(curr_chord) <= -12:
-                    for i in range(len(curr_chord)):
-                        curr_chord[i] += 12
-                elif max(curr_chord) >= 12:
-                    for i in range(len(curr_chord)):
-                        curr_chord[i] -= 12
-
-                # If note n appears only once in the chord as 12, traspose everything down by an octave
-                if 0 not in curr_chord and 12 in curr_chord:
-                    for i in range(len(curr_chord)):
-                        curr_chord[i] -= 12
-            
-            # From chord list, only keep those where note n appears in the position corrisponding to the input melody voice
-            # "[:]" syntax is to avoid list index skipping after removing an element 
-            for available_chord in available_chords[:]:
-                # 0 or 12 is number of semitones from note n, so n itself
-                if available_chord[self.voice_idx] != 0 and available_chord[self.voice_idx] != 12:
-                    available_chords.remove(available_chord)                    
-            
-            # Choose a random chord from those available
-            chosen_chord = random.choice(available_chords)
-            
-            # Turn note list into tuple to ease unpacking
-            return (*chosen_chord, )
-            
-            
-        # If note n is not diatonic
-        else:            
-            # For now, the same note is given to all voice lines
-            #print(f"NON-DIATONIC: {n_noOctave}\n")
-            return (0, 0, 0, 0)
+        chosen_chord = random.choice(available_chords)
+        return (*chosen_chord, )
         
 
 class EvoComposer:
-    def __init__(self, line_string, line_voice, p_size=23, p_c=0.7, p_m=0.01, max_gen=100):
+    def __init__(self, line_string, line_voice, p_size=5, p_c=0.7, p_m=0.01, max_gen=100):
         # Create line stream from input TinyNotation string
         self.line = converter.parse(line_string)
         self.line_voice = line_voice
