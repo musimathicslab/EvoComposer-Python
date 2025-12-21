@@ -2,23 +2,15 @@ from music21 import *
 from utility.chromosome import Chromosome
 
 class EvoComposer:
-    def __init__(self, line_string, line_voice, p_size=5, p_c=0.7, p_m=0.01, max_gen=100):
-        # Create line stream from input TinyNotation string
-        self.line = converter.parse(line_string)
-        self.line_voice = line_voice
-        
-        # Population size
-        self.p_size = p_size
-        
-        # Probability of crossover
-        self.p_c = p_c
-        
-        # Probability of mutation
-        self.p_m = p_m
-        
-        # Maximum number of generations
-        self.max_gen = max_gen
-        
+    def __init__(self, melody, voice, population_size=5, prob_crossover=0.7, prob_mutation=0.01, generations_count=100):
+        self.line = converter.parse(melody)
+
+        self.line_voice = voice
+        self.population_size = population_size
+        self.prob_crossover = prob_crossover
+        self.prob_mutation = prob_mutation
+        self.generations_count = generations_count
+
         self.population = self.initialize_population()
 
 
@@ -28,7 +20,7 @@ class EvoComposer:
         """
         population = []
         
-        for _ in range(self.p_size):
+        for _ in range(self.population_size):
             c = Chromosome(self.line, self.line_voice)
             population.append(c)
         
