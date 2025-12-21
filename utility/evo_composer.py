@@ -16,7 +16,6 @@ class EvoComposer:
         Initialize the population by creating p_size random harmonizations.
         """
         self.population = []
-        
         for _ in range(self.population_size):
             c = Chromosome(self.melody, self.voice)
             self.population.append(c)
@@ -26,7 +25,6 @@ class EvoComposer:
         # Evaluate the fitness of each individual in the population
         for chrom in self.population:
             chrom._evaluate()
-        
 
 
     def select_parents(self):
