@@ -3,28 +3,23 @@ from utility.chromosome import Chromosome
 
 class EvoComposer:
     def __init__(self, melody, voice, population_size=5, prob_crossover=0.7, prob_mutation=0.01, generations_count=100):
-        self.line = converter.parse(melody)
-
-        self.line_voice = voice
+        self.melody = melody
+        self.voice = voice
         self.population_size = population_size
         self.prob_crossover = prob_crossover
         self.prob_mutation = prob_mutation
         self.generations_count = generations_count
-
-        self.population = self.initialize_population()
 
 
     def initialize_population(self):
         """
         Initialize the population by creating p_size random harmonizations.
         """
-        population = []
+        self.population = []
         
         for _ in range(self.population_size):
-            c = Chromosome(self.line, self.line_voice)
-            population.append(c)
-        
-        return population
+            c = Chromosome(self.melody, self.voice)
+            self.population.append(c)
 
 
     def evaluate(self):

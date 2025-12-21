@@ -7,7 +7,10 @@ if __name__ == "__main__":
     melody = "tinyNotation: 4/4 c'4 d' e' f#' g' a' b' c''"
     voice = "Soprano"
     
-    evc = EvoComposer(melody, voice, population_size=1)
+    melody_line = converter.parse(melody)
+    
+    evc = EvoComposer(melody_line, voice, population_size=1)
+    evc.initialize_population()
     
     for chrom in evc.population:
         print(chrom)
