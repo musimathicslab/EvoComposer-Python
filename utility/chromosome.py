@@ -23,6 +23,9 @@ class Chromosome:
         self.voice = voice
 
         self.keySignature = self.melody.analyze("key")
+        key_scale = self.keySignature.getScale()
+        key_scale_pitches = scale.Scale.extractPitchList(key_scale, comparisonAttribute="pitchClass")
+        self.diatonic_notes = [scale_pitch.name for scale_pitch in key_scale_pitches]
 
         self.chords = []
 
@@ -47,36 +50,34 @@ class Chromosome:
             self.tenor,
             self.bass,
         ])
-    
+
+
     def harmonize(self):
         """
         Harmonizes input melody by assigning, for each note of the
         input melody, a note to every other part (besides the
         one specified in input) as to create a chord
         """
-        
+
         measure_num = 1
         measure_offset = 0
         global_note_offset = 0
 
-        # For each measure in the input melody line
         for meas in self.melody:
             bass_line = []
             tenor_line = []
             alto_line = []
             soprano_line = []
-            
-            # For each note in the measure
+
             for n in meas.notes:
-                # Generate a chord
                 bass, tenor, alto, soprano = self._build_random_chord(n)
-                
+
                 # Save the notes
                 bass_note = n.transpose(bass)
                 tenor_note = n.transpose(tenor)
                 alto_note = n.transpose(alto)
                 soprano_note = n.transpose(soprano)
-                
+
                 #print(measure_num, [bass_note.nameWithOctave, tenor_note.nameWithOctave, alto_note.nameWithOctave, soprano_note.nameWithOctave])
 
                 # Add them to respective lines
@@ -84,7 +85,7 @@ class Chromosome:
                 tenor_line.append(tenor_note)
                 alto_line.append(alto_note)
                 soprano_line.append(soprano_note)
-            
+
                 # Also add each chord to chord list
                 # self.chords.append((bass_note, tenor_note, alto_note, soprano_note))
                 self.chords.append(chord.Chord([bass_note, tenor_note, alto_note, soprano_note]))
@@ -95,7 +96,7 @@ class Chromosome:
                 note_offset = 0
                 # Create a new measure
                 new_measure = stream.Measure(number=measure_num)
-                
+
                 # Add clef, key signature and time signature objects to first measure
                 """
                 if measure_num == 1:
@@ -108,19 +109,19 @@ class Chromosome:
                         part_clef = clef.AltoClef()
                     elif part.id == "Soprano":
                         part_clef = clef.SopranoClef()
-                    
+
                     new_measure.insert(offsetOrItemOrList=0, itemOrNone=part_clef)
-                                        
+
                     # key signature
                     melody_tonic = str(self.keySignature).split()[0]
                     melody_mode = str(self.keySignature).split()[1]
                     new_measure.insert(offsetOrItemOrList=0, itemOrNone=key.Key(melody_tonic, melody_mode))
-                    
+
                     # time signature
                     new_measure.insert(offsetOrItemOrList=0, itemOrNone=meter.TimeSignature("4/4"))
-                """ 
-                    
-                
+                """
+
+
                 # Fill it with the notes from the current line
                 for n in line:
                     new_measure.insert(offsetOrItemOrList=global_note_offset + note_offset, itemOrNone=n)
@@ -134,34 +135,37 @@ class Chromosome:
             global_note_offset += 4
 
 
-    def _build_random_chord(self, n):
+    def check_chord_contains_voice_idx(self, curr_chord):
+        return curr_chord[self.voice_idx] == 0 \
+            or curr_chord[self.voice_idx] == 12 \
+            or curr_chord[self.voice_idx] == -12
+
+    def _build_random_chord(self, note):
         available_chords = []
         
-        # Get diatonic notes in the scale of the key signature of the input melody
-        s = self.keySignature.getScale()
-        diatonic_notes = [str(p)[:-1] for p in scale.Scale.extractPitchList(s, comparisonAttribute="pitchClass")]
-        
-        # If note n is diatonic, choose a random chord that contains it among diatonic ones
-        n_noOctave = n.nameWithOctave[:-1]
+        note_str = note.pitch.name
+        key_str = str(self.keySignature)
 
+        # If note n is diatonic, choose a random chord that contains it among diatonic ones
         # Load note chord atlas
-        note_chord_atlas_path = os.path.join(".\\utility\\chord_atlases", n_noOctave + "_chord_atlas.json")
+        note_chord_atlas_path = os.path.join(".\\utility\\chord_atlases", note_str + "_chord_atlas.json")
         with open(note_chord_atlas_path, "r") as file:
             note_chord_atlas = json.load(file)
         
-        if n_noOctave in diatonic_notes:
-            for cur_chord in note_chord_atlas[str(self.keySignature)]:
-                if cur_chord[self.voice_idx] == 0 or cur_chord[self.voice_idx] == 12 or cur_chord[self.voice_idx] == -12:
-                    available_chords.append((cur_chord, self.keySignature))
-            
-        # If note n is not diatonic, choose a random chord that contains it among all possible keys
+        # Pick a randon chord containing the note
+        if note_str in self.diatonic_notes:
+            # Diatonic note
+            for curr_chord in note_chord_atlas[key_str]:
+                if self.check_chord_contains_voice_idx(curr_chord):
+                    available_chords.append((curr_chord, self.keySignature))
         else:
+            # Non-diatonic note
             for key_signature in KEY_SIGNATURES:
-                for cur_chord in note_chord_atlas[key_signature]:
-                    if cur_chord[self.voice_idx] == 0 or cur_chord[self.voice_idx] == 12 or cur_chord[self.voice_idx] == -12:
+                for curr_chord in note_chord_atlas[key_signature]:
+                    if self.check_chord_contains_voice_idx(curr_chord):
                         key_tonic, key_mode = key_signature.split()
-                        available_chords.append((cur_chord, key.Key(key_tonic, key_mode)))
-
+                        key_signature = key.Key(key_tonic, key_mode)
+                        available_chords.append((curr_chord, key_signature))
 
         chosen_chord, chosen_chord_key = random.choice(available_chords)
         self.chordKeySignatures.append(chosen_chord_key)
@@ -169,7 +173,6 @@ class Chromosome:
         return (*chosen_chord, )
 
 
-    
     def _harmonic_evaluation(self):
         evaluation = 0
         for i in range(len(self.chords)-1):
