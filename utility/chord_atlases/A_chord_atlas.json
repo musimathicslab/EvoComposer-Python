@@ -150,6 +150,7 @@
       ]
    ],
    "D# major": [],
+   "E- major": [],
    "E major": [
       [
          -8,
@@ -796,8 +797,8 @@
       ]
    ],
    "B major": [],
-   "C minor": [],
-   "C# minor": [
+   "c minor": [],
+   "c# minor": [
       [
          -8,
          -6,
@@ -877,8 +878,8 @@
          0
       ]
    ],
-   "D- minor": [],
-   "D minor": [
+   "d- minor": [],
+   "d minor": [
       [
          -7,
          -4,
@@ -952,8 +953,9 @@
          3
       ]
    ],
-   "D# minor": [],
-   "E minor": [
+   "d# minor": [],
+   "e- minor": [],
+   "e minor": [
       [
          -9,
          -5,
@@ -1069,8 +1071,8 @@
          12
       ]
    ],
-   "F minor": [],
-   "F# minor": [
+   "f minor": [],
+   "f# minor": [
       [
          -3,
          0,
@@ -1192,8 +1194,8 @@
          5
       ]
    ],
-   "G- minor": [],
-   "G minor": [
+   "g- minor": [],
+   "g minor": [
       [
          -9,
          -6,
@@ -1339,9 +1341,9 @@
          12
       ]
    ],
-   "G# minor": [],
-   "A- minor": [],
-   "A minor": [
+   "g# minor": [],
+   "a- minor": [],
+   "a minor": [
       [
          0,
          3,
@@ -1523,9 +1525,9 @@
          0
       ]
    ],
-   "A# minor": [],
-   "B- minor": [],
-   "B minor": [
+   "a# minor": [],
+   "b- minor": [],
+   "b minor": [
       [
          -10,
          -7,

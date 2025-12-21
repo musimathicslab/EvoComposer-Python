@@ -2,7 +2,7 @@ from music21 import *
 import os
 import copy
 import json
-from constants import MAJOR_KEY_CHORD_INFO, MINOR_KEY_CHORD_INFO
+from constants import MAJOR_KEY_CHORD_INFO, MINOR_KEY_CHORD_INFO, KEY_SIGNATURES, NOTES
 
 def _handle_7th_inversions(curr_chord, inv):
     before_inv = copy.deepcopy(curr_chord)
@@ -94,13 +94,10 @@ def generate_chord_atlas():
     # Dictionary to be dumped in a json file
     chord_atlas = {}
     
-    key_signatures = [
-        "C major", "C# major", "D- major", "D major", "D# major", "E major", "F major", "F# major", "G- major", "G major", "G# major", "A- major", "A major", "A# major", "B- major", "B major",
-        "C minor", "C# minor", "D- minor", "D minor", "D# minor", "E minor", "F minor", "F# minor", "G- minor", "G minor", "G# minor", "A- minor", "A minor", "A# minor", "B- minor", "B minor",
-    ]
+    
 
     # For each key signature
-    for key_signature in key_signatures:        
+    for key_signature in KEY_SIGNATURES:        
         key_tonic = key_signature.split()[0]
         key_mode = key_signature.split()[1]
 
@@ -177,12 +174,11 @@ def generate_note_chord_atlas():
     if not os.path.exists(chord_atlases_path):
         os.makedirs(chord_atlases_path)
         
-    notes = ["C", "C#", "D-", "D", "D#", "E-", "E", "F", "F#", "G-", "G", "G#", "A-", "A", "A#", "B-", "B"]
     
     with open(os.path.join(chord_atlases_path, 'keys_chord_atlas.json'), 'r') as file:
         chord_atlas = json.load(file)
 
-    for n in notes:
+    for n in NOTES:
         n_chord_atlas = {}
 
         # For each key signature 

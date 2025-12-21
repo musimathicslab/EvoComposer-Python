@@ -4,35 +4,13 @@ from utility.evo_composer import *
 
 if __name__ == "__main__":
     #input_melody_string = "tinyNotation: 4/4 e'4 f' g' a' f'# d' e' e'"
-    input_melody_string = "tinyNotation: 4/4 c'4 d' e' f' g' a' b' c''"
+    input_melody_string = "tinyNotation: 4/4 c'4 d' e' f#' g' a' b' c''"
     input_melody_voice = "Soprano"
     
-    """
-    obj = Chromosome(converter.parse(input_melody_string), input_melody_voice)
-    obj.score.show("text")    
-    """
+    evc = EvoComposer(input_melody_string, input_melody_voice, p_size=1)
     
-    # Note retrieval test
-    """
-    obj = Chromosome(converter.parse(input_melody_string), input_melody_voice)
-    parts = obj.score.getElementsByClass(stream.Part)
-    for part in parts:
-        print(f"Part: {part.id}")
-        measures = part.getElementsByClass(stream.Measure)
-        
-        for measure in part:
-            print(f"Measure at offset: {measure.offset}")
-            notes = measure.getElementsByClass(note.Note)
-            [print(n) for n in notes]
-        print()
-    """
+    for chrom in evc.population:
+        print(chrom)
     
-    # initialize_population() test
-
-    evc = EvoComposer(input_melody_string, input_melody_voice)
-    i=0
-    for c in evc.population:
-        i+=1
-        print(f"{i}) {c.score}")
-    
-    # evaluate() test
+    print("Evaluating...")
+    evc.evaluate()

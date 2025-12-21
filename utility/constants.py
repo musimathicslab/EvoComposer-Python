@@ -129,3 +129,37 @@ MINOR_KEY_CHORD_INFO = {
         "AppearsInDegree": [1, 3, 5, 7]
     }    
 }
+
+# Key signatures
+KEY_SIGNATURES = [
+        "C major", "C# major", "D- major", "D major", "D# major", "E- major", "E major", "F major", "F# major", "G- major", "G major", "G# major", "A- major", "A major", "A# major", "B- major", "B major",
+        "c minor", "c# minor", "d- minor", "d minor", "d# minor", "e- minor", "e minor", "f minor", "f# minor", "g- minor", "g minor", "g# minor", "a- minor", "a minor", "a# minor", "b- minor", "b minor",
+    ]
+
+# Notes
+NOTES = ["C", "C#", "D-", "D", "D#", "E-", "E", "F", "F#", "G-", "G", "G#", "A-", "A", "A#", "B-", "B"]
+    
+
+# Harmonic weights
+WEIGHTS_SAME_MAJOR_TONALITY = {
+    "I":        {"I": 0.226, "ii": 0.025, "iii": 0.025, "IV": 0.266, "V": 0.266, "vi": 0.150, "vii°": 0.002},
+    "ii":       {"I": 0.025, "ii": 0.400, "iii": 0.025, "IV": 0.075, "V": 0.400, "vi": 0.075, "vii°": 0},
+    "iii":      {"I": 0.016, "ii": 0.016, "iii": 0.400, "IV": 0.150, "V": 0.016, "vi": 0.400, "vii°": 0.002},
+    "IV":       {"I": 0.075, "ii": 0.075, "iii": 0.025, "IV": 0.400, "V": 0.400, "vi": 0.025, "vii°": 0},
+    "V":        {"I": 0.400, "ii": 0.025, "iii": 0.025, "IV": 0.075, "V": 0.400, "vi": 0.075, "vii°": 0},
+    "vi":       {"I": 0.050, "ii": 0.266, "iii": 0.075, "IV": 0.075, "V": 0.266, "vi": 0.266, "vii°": 0.002},
+    "vii°":     {"I": 0.226, "ii": 0.025, "iii": 0.025, "IV": 0.266, "V": 0.266, "vi": 0.150, "vii°": 0.002}
+}
+
+WEIGHTS_SAME_MINOR_TONALITY = {
+    "i":        {"i": 0.226, "ii°": 0.016, "III": 0.016, "iv": 0.266, "V": 0.266, "VI": 0.150, "vii°": 0.016, "VII": 0},
+    "ii°":      {"i": 0.025, "ii°": 0.400, "III": 0.025, "iv": 0.075, "V": 0.400, "VI": 0.075, "vii°": 0, "VII": 0},
+    "III":      {"i": 0.012, "ii°": 0.012, "III": 0.400, "iv": 0.150, "V": 0.120, "VI": 0.400, "vii°": 0, "VII": 0.120},
+    "iv":       {"i": 0.075, "ii°": 0.075, "III": 0.025, "iv": 0.400, "V": 0.400, "VI": 0.025, "vii°": 0, "VII": 0},
+    "V":        {"i": 0.400, "ii°": 0.025, "III": 0.025, "iv": 0.075, "V": 0.400, "VI": 0.075, "vii°": 0, "VII": 0},
+    "vi":       {"i": 0.050, "ii°": 0.266, "III": 0.075, "iv": 0.075, "V": 0.266, "VI": 0.266, "vii°": 0, "VII": 0},
+    "vii°":     {"i": 0.950, "ii°": 0, "III": 0, "iv": 0, "V": 0, "VI": 0, "vii°": 0.050, "VII": 0},
+    "VII":      {"i": 0, "ii°": 0, "III": 0.400, "iv": 0.050, "V": 0, "VI": 0.150, "vii°": 0, "VII": 0.400}
+}
+
+# Harmonic coefficients
