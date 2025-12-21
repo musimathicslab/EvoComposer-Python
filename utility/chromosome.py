@@ -13,15 +13,14 @@ VOICE_MAPPING = {
 
 class Chromosome:
     """
-    In this context, a chromosome is a certain harmonization of the input melody that has either been built
-    while initializing the population or obtained by crossover/mutation during the algorithm's epochs.
+    In this context, a chromosome is a certain harmonization of the
+    input melody that has either been built while initializing the
+    population or obtained by crossover/mutation during the
+    algorithm's epochs.
     """
     def __init__(self, melody, voice):
         self.melody = melody
         self.voice = voice
-
-        bars = self.melody.getElementsByClass(stream.Measure)
-        self.bars_count = len(bars)
 
         self.keySignature = self.melody.analyze("key")
 
@@ -48,12 +47,11 @@ class Chromosome:
             self.tenor,
             self.bass,
         ])
-
-        self.harmonic_value = 0
-        self.melodic_value = 0
     
     def harmonize(self):
-        """Harmonizes input melody by assigning, for each note of the input melody, a note to every other part (besides the
+        """
+        Harmonizes input melody by assigning, for each note of the
+        input melody, a note to every other part (besides the
         one specified in input) as to create a chord
         """
         
@@ -173,6 +171,7 @@ class Chromosome:
 
     
     def _harmonic_evaluation(self):
+        evaluation = 0
         for i in range(len(self.chords)-1):
             c1 = self.chords[i]
             c2 = self.chords[i+1]
@@ -207,10 +206,18 @@ class Chromosome:
             else:
                 print("c1 and c2 are in different keys")
             print()
-        
+        return evaluation
+
     
     def _melodic_evaluation(self):
-        pass
+        evaluation = 0
+        return evaluation
+
 
     def _evaluate(self):
-        self._harmonic_evaluation()
+        eval_harmonic = self._harmonic_evaluation()
+        eval_melodic = self._melodic_evaluation()
+        return (
+            eval_harmonic,
+            eval_melodic,
+        )
