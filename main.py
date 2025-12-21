@@ -17,9 +17,10 @@ if __name__ == "__main__":
     
     for chrom in evc.population:
         print(chrom)
+        # chrom.melody.show("midi")
     
     print("EvoComposer evaluate")
     evc.evaluate()
-    
+
     print("EvoComposer run generations")
     evc.run()

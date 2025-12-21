@@ -4,54 +4,34 @@ import os
 import json
 from utility.constants import KEY_SIGNATURES
 
+VOICE_MAPPING = {
+    "Soprano": 3,
+    "Alto": 2,
+    "Tenor": 1,
+    "Bass": 0
+}
 
 class Chromosome:
     """In this context, a chromosome is a certain harmonization of the input melody that has either been built
     while initializing the population or obtained by crossover/mutation during the algorithm's epochs.
     """
-    def __init__(self, line, line_voice):
-        # Melody stream
-        self.line = line
-        
-        # Number of measures
-        self.n_measures = len(self.line.getElementsByClass(stream.Measure))
-        
-        # Key signature
-        self.keySignature = self.line.analyze("key")
+    def __init__(self, melody, voice):
+        self.melody = melody
+        self.voice = voice
 
-        # Chords
+        bars = self.melody.getElementsByClass(stream.Measure)
+        self.bars_count = len(bars)
+
+        self.keySignature = self.melody.analyze("key")
+
         self.chords = []
 
         # Key signatures list (for modulation detection)
         self.chordKeySignatures = []
 
-        # Input melody line voice
-        self.line_voice = line_voice
-        
-        # Voice mapping for chord selection
-        self.voice_mapping = {
-            "Soprano": 3,
-            "Alto": 2,
-            "Tenor": 1,
-            "Bass": 0
-        }
-        self.voice_idx = self.voice_mapping[self.line_voice]
+        self.voice_idx = VOICE_MAPPING[self.voice]
         
         # Init parts
-        self._init_parts()
-        self._init_score()
-        
-        # Harmonic and melodic quality
-        self.harmonic_value = 0
-        self.melodic_value = 0
-        
-        
-        # Harmonize input melody
-        self.harmonize()
-        
-    
-    def _init_parts(self):
-        
         # Part objects to represent single voice parts
         self.soprano = stream.Part()
         self.alto = stream.Part()
@@ -62,21 +42,16 @@ class Chromosome:
         self.alto.id = "Alto"
         self.tenor.id = "Tenor"
         self.bass.id = "Bass"
-        
-    
-    def _init_score(self):
-        """
-        Create score rapresentation of melody and parts. The object contains four different Part objects for the Soprano, Alto, Tenor and Bass voices.
-        This method is called only after harmonization of the input melody.
-        
-        Returns:
-            stream.Score(): score object containing parts, measures and input melody.
-        """
-        self.score = stream.Score()
 
-        # Add parts to Score object
+        self.score = stream.Score()
         self.score.append([self.soprano, self.alto, self.tenor, self.bass])
 
+        # Harmonic and melodic quality
+        self.harmonic_value = 0
+        self.melodic_value = 0
+
+        # Harmonize input melody
+        self.harmonize()
     
     def harmonize(self):
         """Harmonizes input melody by assigning, for each note of the input melody, a note to every other part (besides the
@@ -88,7 +63,7 @@ class Chromosome:
         global_note_offset = 0
 
         # For each measure in the input melody line
-        for meas in self.line:
+        for meas in self.melody:
             bass_line = []
             tenor_line = []
             alto_line = []
