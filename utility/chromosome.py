@@ -30,21 +30,23 @@ class Chromosome:
         self.chordKeySignatures = []
 
         self.voice_idx = VOICE_MAPPING[self.voice]
-        
-        # Init parts
-        # Part objects to represent single voice parts
+
         self.soprano = stream.Part()
-        self.alto = stream.Part()
-        self.tenor = stream.Part()
-        self.bass = stream.Part()
-        
         self.soprano.id = "Soprano"
+        self.alto = stream.Part()
         self.alto.id = "Alto"
+        self.tenor = stream.Part()
         self.tenor.id = "Tenor"
+        self.bass = stream.Part()
         self.bass.id = "Bass"
 
         self.score = stream.Score()
-        self.score.append([self.soprano, self.alto, self.tenor, self.bass])
+        self.score.append([
+            self.soprano,
+            self.alto,
+            self.tenor,
+            self.bass,
+        ])
 
         # Harmonic and melodic quality
         self.harmonic_value = 0
