@@ -18,6 +18,8 @@ class EvoComposer:
         self.population = []
         for _ in range(self.population_size):
             c = Chromosome(self.melody, self.voice)
+            c.harmonize()
+
             self.population.append(c)
 
 

@@ -8,11 +8,12 @@ VOICE_MAPPING = {
     "Soprano": 3,
     "Alto": 2,
     "Tenor": 1,
-    "Bass": 0
+    "Bass": 0,
 }
 
 class Chromosome:
-    """In this context, a chromosome is a certain harmonization of the input melody that has either been built
+    """
+    In this context, a chromosome is a certain harmonization of the input melody that has either been built
     while initializing the population or obtained by crossover/mutation during the algorithm's epochs.
     """
     def __init__(self, melody, voice):
@@ -48,12 +49,8 @@ class Chromosome:
             self.bass,
         ])
 
-        # Harmonic and melodic quality
         self.harmonic_value = 0
         self.melodic_value = 0
-
-        # Harmonize input melody
-        self.harmonize()
     
     def harmonize(self):
         """Harmonizes input melody by assigning, for each note of the input melody, a note to every other part (besides the
