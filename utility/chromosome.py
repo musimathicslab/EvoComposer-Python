@@ -70,7 +70,7 @@ class Chromosome:
             soprano_line = []
 
             for n in meas.notes:
-                bass, tenor, alto, soprano = self._build_random_chord(n)
+                bass, tenor, alto, soprano = self._get_random_chord(n)
 
                 # Save the notes
                 bass_note = n.transpose(bass)
@@ -121,28 +121,27 @@ class Chromosome:
                     new_measure.insert(offsetOrItemOrList=0, itemOrNone=meter.TimeSignature("4/4"))
                 """
 
-
                 # Fill it with the notes from the current line
                 for n in line:
                     new_measure.insert(offsetOrItemOrList=global_note_offset + note_offset, itemOrNone=n)
                     note_offset += 1
-                    
+
                 # And add it to the current part
                 part.insert(offsetOrItemOrList=measure_offset, itemOrNone=new_measure)
-        
+
             measure_num += 1
             measure_offset += 4
             global_note_offset += 4
 
 
-    def check_chord_contains_voice_idx(self, curr_chord):
+    def _check_chord_contains_voice_idx(self, curr_chord):
         return curr_chord[self.voice_idx] == 0 \
             or curr_chord[self.voice_idx] == 12 \
             or curr_chord[self.voice_idx] == -12
 
-    def _build_random_chord(self, note):
+    def _get_available_chords(self, note):
         available_chords = []
-        
+
         note_str = note.pitch.name
         key_str = str(self.keySignature)
 
@@ -151,22 +150,26 @@ class Chromosome:
         note_chord_atlas_path = os.path.join(".\\utility\\chord_atlases", note_str + "_chord_atlas.json")
         with open(note_chord_atlas_path, "r") as file:
             note_chord_atlas = json.load(file)
-        
+
         # Pick a randon chord containing the note
         if note_str in self.diatonic_notes:
             # Diatonic note
             for curr_chord in note_chord_atlas[key_str]:
-                if self.check_chord_contains_voice_idx(curr_chord):
+                if self._check_chord_contains_voice_idx(curr_chord):
                     available_chords.append((curr_chord, self.keySignature))
         else:
             # Non-diatonic note
             for key_signature in KEY_SIGNATURES:
                 for curr_chord in note_chord_atlas[key_signature]:
-                    if self.check_chord_contains_voice_idx(curr_chord):
-                        key_tonic, key_mode = key_signature.split()
-                        key_signature = key.Key(key_tonic, key_mode)
-                        available_chords.append((curr_chord, key_signature))
+                    if self._check_chord_contains_voice_idx(curr_chord):
+                        key_tonic, key_mode = key_signature.split(" ")
+                        key_obj = key.Key(key_tonic, key_mode)
+                        available_chords.append((curr_chord, key_obj))
 
+        return available_chords
+
+    def _get_random_chord(self, note):
+        available_chords = self._get_available_chords(note)
         chosen_chord, chosen_chord_key = random.choice(available_chords)
         self.chordKeySignatures.append(chosen_chord_key)
         # print(f"chosen_chord: {chosen_chord}, chosen_chord_key: {chosen_chord_key}")
@@ -181,13 +184,13 @@ class Chromosome:
             print(f"c1: {c1}\nc2: {c2}")
             print(f"c1 normal order: {c1.normalOrder}")
             print(f"c2 normal order: {c2.normalOrder}")
-            
-            
+
+
             cur_key = self.chordKeySignatures[i]
             next_key = self.chordKeySignatures[i+1]
             print(f"cur_key: {cur_key}\nnext_key: {next_key}")
-            
-            
+
+
             # If two consecutive chords are in the same key signature
             if cur_key == next_key:
                 # Roman numeral analysis
@@ -199,19 +202,19 @@ class Chromosome:
                 # If it's a major key
                 if str(cur_key).split()[1] == "major":
                     print("c1 and c2 are in the same major key")
-                    
-                
+
+
                 # Else, if it's a minor key
                 else:
                     print("c1 and c2 are in the same minor key")
-                        
+
             # Modulation
             else:
                 print("c1 and c2 are in different keys")
             print()
         return evaluation
 
-    
+
     def _melodic_evaluation(self):
         evaluation = 0
         return evaluation
