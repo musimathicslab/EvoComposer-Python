@@ -157,6 +157,132 @@ class Chromosome:
             or curr_chord[self.voice_idx] == 12 \
             or curr_chord[self.voice_idx] == -12
 
+    def get_note_num_from_node_str(self, note_str):
+        num = 0
+        if note_str.lower() == "c":
+            num = 0
+        if note_str.lower() == "c#":
+            num = 1
+        if note_str.lower() == "d-":
+            num = 1
+        if note_str.lower() == "d":
+            num = 2
+        if note_str.lower() == "d#":
+            num = 3
+        if note_str.lower() == "e-":
+            num = 3
+        if note_str.lower() == "e":
+            num = 4
+        if note_str.lower() == "f":
+            num = 5
+        if note_str.lower() == "f#":
+            num = 6
+        if note_str.lower() == "g-":
+            num = 6
+        if note_str.lower() == "g":
+            num = 7
+        if note_str.lower() == "g#":
+            num = 8
+        if note_str.lower() == "a-":
+            num = 8
+        if note_str.lower() == "a":
+            num = 9
+        if note_str.lower() == "a#":
+            num = 10
+        if note_str.lower() == "b-":
+            num = 10
+        if note_str.lower() == "b":
+            num = 11
+        return num
+
+    def get_all_available_chords_from_scale(self, notes_str):
+        num = 0
+        notes = []
+        for note_str in notes_str:
+            num = self.get_note_num_from_node_str(note_str)
+            notes.append(num)
+        all_chords = []
+        for i in range(len(notes)):
+            chord_tria = [
+                notes[i],
+                notes[(i + 2) % len(notes)],
+                notes[(i + 4) % len(notes)],
+            ]
+            chord_quad = [
+                notes[i],
+                notes[(i + 2) % len(notes)],
+                notes[(i + 4) % len(notes)],
+                notes[(i + 6) % len(notes)],
+            ]
+            all_chords.append(chord_tria)
+            all_chords.append(chord_quad)
+        # print("#####################")
+        # print("notes")
+        # print(notes)
+        # print("all chords")
+        # for x in all_chords:
+        #     print(x)
+        # TODO: Use circulant matrix
+        alls_inversions = []
+        for chord in all_chords:
+            if len(chord) == 3:
+                alls = [
+                    [
+                        chord[0],
+                        chord[1],
+                        chord[2],
+                        chord[0],
+                    ],
+                    [
+                        chord[0],
+                        chord[1],
+                        chord[2],
+                        chord[1],
+                    ],
+                    [
+                        chord[0],
+                        chord[1],
+                        chord[2],
+                        chord[2],
+                    ],
+                ]
+            else:
+                alls = [chord]
+            for x in alls:
+                alls_inversions.extend([
+                    [
+                        x[0],
+                        x[1],
+                        x[2],
+                        x[3],
+                    ],
+                    [
+                        x[1],
+                        x[2],
+                        x[3],
+                        x[0],
+                    ],
+                    [
+                        x[2],
+                        x[3],
+                        x[0],
+                        x[1],
+                    ],
+                    [
+                        x[3],
+                        x[0],
+                        x[1],
+                        x[2],
+                    ],
+                ])
+            # TODO: Keep going from here...
+            # Se sono tre: raddoppio di tutte le note per avere lista quattro
+            # Hai lista quattro: rivolti (all possible rounds)
+        # print("all inversions")
+        # for x in alls_inversions:
+        #     print(x)
+        # print()
+
     def _get_available_chords(self, note):
         available_chords = []
 
@@ -175,6 +301,13 @@ class Chromosome:
             for curr_chord in note_chord_atlas[key_str]:
                 if self._check_chord_contains_voice_idx(curr_chord):
                     available_chords.append((curr_chord, self.keySignature))
+            # TODO: Use this instead of calculated files
+            self.get_all_available_chords_from_scale(self.diatonic_notes)
+            # if note_str == "C":
+            #     print("###################")
+            #     for x in available_chords:
+            #         print(x)
+            #     print("###################")
         else:
             # Non-diatonic note
             for key_signature in KEY_SIGNATURES:
