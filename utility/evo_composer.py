@@ -27,8 +27,8 @@ class EvoComposer:
         # Evaluate the fitness of each individual in the population
         for chrom in self.population:
             eval_harmonic, eval_melodic = chrom._evaluate()
-            # print(eval_harmonic)
-            # print(eval_melodic)
+            print(" >>>1 ", eval_harmonic)
+            print(" >>>2 ", eval_melodic)
 
 
     def select_parents(self):

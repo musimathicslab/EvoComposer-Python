@@ -105,7 +105,7 @@ def generate_chord_atlas():
 
         # Choose chord info dictionary based on key signature
         key_chord_info = MAJOR_KEY_CHORD_INFO if key_mode == "major" else MINOR_KEY_CHORD_INFO
-            
+
         s = k.getScale(k.mode)
         diatonic_notes = [str(p)[:-1] for p in scale.Scale.extractPitchList(s, comparisonAttribute="pitchClass")]
         

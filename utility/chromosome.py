@@ -2,7 +2,8 @@ from music21 import *
 import random
 import os
 import json
-from utility.constants import KEY_SIGNATURES
+from utility.constants import KEY_SIGNATURES, WEIGHTS_SAME_MAJOR_TONALITY, WEIGHTS_SAME_MINOR_TONALITY, COEFFICIENTS_SAME_MAJOR_TONALITY, COEFFICIENTS_SAME_MINOR_TONALITY, COEFFICIENTS_MODULATION
+import sys
 
 VOICE_MAPPING = {
     "Soprano": 3,
@@ -23,7 +24,17 @@ class Chromosome:
         self.voice = voice
 
         self.keySignature = self.melody.analyze("key")
-        key_scale = self.keySignature.getScale()
+        key_tonic = str(self.keySignature).split()[0]
+        key_mode = str(self.keySignature).split()[1] # Major or minor
+        key_scale = None # self.keySignature.getScale()
+        if key_mode == "major":
+            key_scale = scale.MajorScale(key_tonic)
+        elif key_mode == "minor":
+            key_scale = scale.MinorScale(key_tonic)
+            # key_scale = scale.HarmonicMinorScale(key_tonic)
+        else:
+            print("Should never happen...")
+            sys.exit(1)
         key_scale_pitches = scale.Scale.extractPitchList(key_scale, comparisonAttribute="pitchClass")
         self.diatonic_notes = [scale_pitch.name for scale_pitch in key_scale_pitches]
 
@@ -88,7 +99,14 @@ class Chromosome:
 
                 # Also add each chord to chord list
                 # self.chords.append((bass_note, tenor_note, alto_note, soprano_note))
-                self.chords.append(chord.Chord([bass_note, tenor_note, alto_note, soprano_note]))
+                self.chords.append(
+                    chord.Chord([
+                        bass_note,
+                        tenor_note,
+                        alto_note,
+                        soprano_note,
+                    ])
+                )
 
 
             # For each part-line pair
@@ -176,41 +194,44 @@ class Chromosome:
         return (*chosen_chord, )
 
 
+    def _get_harmonic_value_same_key(self, curr_chord, next_chord, curr_key):
+        curr_key_mode = str(curr_key).split()[1]
+        weights_dict = WEIGHTS_SAME_MAJOR_TONALITY if curr_key_mode == "major" else WEIGHTS_SAME_MINOR_TONALITY
+        coefs_dict = COEFFICIENTS_SAME_MAJOR_TONALITY if curr_key_mode == "major" else COEFFICIENTS_SAME_MINOR_TONALITY
+
+        print(curr_chord, next_chord)
+        weix = weights_dict[curr_chord]
+        print(weix)
+
+        w_i = weix[next_chord]
+        a_i = coefs_dict[curr_chord][next_chord]
+        print(w_i, a_i)
+
+    def _get_harmonic_value_modulation(curr_chord, next_chord, curr_key):
+        pass
+
     def _harmonic_evaluation(self):
         evaluation = 0
         for i in range(len(self.chords)-1):
-            c1 = self.chords[i]
-            c2 = self.chords[i+1]
-            print(f"c1: {c1}\nc2: {c2}")
-            print(f"c1 normal order: {c1.normalOrder}")
-            print(f"c2 normal order: {c2.normalOrder}")
+            curr_chord = self.chords[i]
+            next_chord = self.chords[i + 1]
 
+            curr_key = self.chordKeySignatures[i]
+            next_key = self.chordKeySignatures[i + 1]
 
-            cur_key = self.chordKeySignatures[i]
-            next_key = self.chordKeySignatures[i+1]
-            print(f"cur_key: {cur_key}\nnext_key: {next_key}")
+            curr_degree = roman.romanNumeralFromChord(curr_chord, curr_key).romanNumeralAlone
+            next_degree = roman.romanNumeralFromChord(next_chord, curr_key).romanNumeralAlone
 
+            # Same key
+            if curr_key == next_key:
+                print(f"curr_chord: {curr_chord}, curr_key: {curr_key}")
+                print(f"next_chord: {next_chord}, next_key: {next_key}")
+                self._get_harmonic_value_same_key(curr_degree, next_degree, curr_key)
 
-            # If two consecutive chords are in the same key signature
-            if cur_key == next_key:
-                # Roman numeral analysis
-                rc1 = roman.romanNumeralFromChord(chord.Chord(c1.normalOrder), cur_key)
-                rc2 = roman.romanNumeralFromChord(chord.Chord(c2.normalOrder), cur_key)
-
-                print(f"rc1: {rc1.romanNumeralAlone}\nrc2: {rc2.romanNumeralAlone}")
-
-                # If it's a major key
-                if str(cur_key).split()[1] == "major":
-                    print("c1 and c2 are in the same major key")
-
-
-                # Else, if it's a minor key
-                else:
-                    print("c1 and c2 are in the same minor key")
-
-            # Modulation
+            # Different key (modulation)
             else:
                 print("c1 and c2 are in different keys")
+
             print()
         return evaluation
 

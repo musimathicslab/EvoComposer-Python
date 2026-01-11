@@ -142,9 +142,9 @@ MINOR_KEY_CHORD_INFO = {
 
 # Key signatures
 KEY_SIGNATURES = [
-        "C major", "C# major", "D- major", "D major", "D# major", "E- major", "E major", "F major", "F# major", "G- major", "G major", "G# major", "A- major", "A major", "A# major", "B- major", "B major",
-        "c minor", "c# minor", "d- minor", "d minor", "d# minor", "e- minor", "e minor", "f minor", "f# minor", "g- minor", "g minor", "g# minor", "a- minor", "a minor", "a# minor", "b- minor", "b minor",
-    ]
+    "C major", "C# major", "D- major", "D major", "D# major", "E- major", "E major", "F major", "F# major", "G- major", "G major", "G# major", "A- major", "A major", "A# major", "B- major", "B major",
+    "c minor", "c# minor", "d- minor", "d minor", "d# minor", "e- minor", "e minor", "f minor", "f# minor", "g- minor", "g minor", "g# minor", "a- minor", "a minor", "a# minor", "b- minor", "b minor",
+]
 
 # Notes
 NOTES = ["C", "C#", "D-", "D", "D#", "E-", "E", "F", "F#", "G-", "G", "G#", "A-", "A", "A#", "B-", "B"]
